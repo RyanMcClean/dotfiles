@@ -25,8 +25,8 @@ dotfiles=(
 	bash_profile
 	bashrc
 	gitconfig
-	htoprc
 	bash-aliases
+	hushlogin
 )
 for f in "${dotfiles[@]}"; do
 	[[ -d ~/.$f && ! -L ~/.$f ]] && rm -r ~/."$f"
