@@ -25,7 +25,7 @@ dotfiles=(
 	bash_profile
 	bashrc
 	gitconfig
-	bash-aliases
+	bash_aliases
 	hushlogin
 )
 for f in "${dotfiles[@]}"; do

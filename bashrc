@@ -103,6 +103,8 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
+else
+    echo could not find bash_aliases
 fi
 
 # enable programmable completion features (you don't need to enable
