@@ -118,5 +118,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# User defined aliases
-alias updog='sudo apt update && sudo apt upgrade -y'
+if [[ $(date +%m) == 12 ]]; then
+  ~/dotfiles/ascii-christmas-tree
+fi
