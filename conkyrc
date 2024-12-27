@@ -27,13 +27,13 @@
 conky.config = {
 -- general positioning
 	alignment = 'middle_left',
-	gap_x = 20,
-	gap_y = 25,
-  minimum_height = 880,
-  minimum_width = 495,
+	gap_x = 17,
+	gap_y = 20,
+    minimum_height = 880,
+    minimum_width = 495,
 
 -- run in the background (daemonize)
-	background = true,
+	background = false,
 
 -- general appearance
 	border_width = 0,
@@ -45,7 +45,7 @@ conky.config = {
 	use_spacer = 'none',
 
 -- sampling & updates
-	update_interval = 0.000001,
+	update_interval = 0.001,
 	cpu_avg_samples = 2,
 	top_cpu_separate = true,
 	net_avg_samples = 2,
@@ -60,15 +60,16 @@ conky.config = {
 	own_window_colour = '#000000',				-- set colour if own_window_transparent no
 	own_window_hints = 'undecorated,below,above,sticky,skip_taskbar,skip_pager',  -- if own_window true - just hints - own_window_type sets it
 	own_window_transparent = false,				-- if own_window_argb_visual is true sets background opacity 0%
-	own_window_title = 'system_conky',			-- set the name manually  - default conky "hostname"
+	own_window_title = 'lcars_conky',			-- set the name manually  - default conky "hostname"
 	own_window_type = 'normal',				    -- if own_window true options are: normal/override/dock/desktop/panel
 
 --double buffer to reduce flicker
 	double_buffer = true,
 
 --use_space yes
+	use_space = true,
 	use_xft = true,
-  font = 'Stardate_81316:size=9',
+    font = 'Stardate_81316:size=12',
 
 -- colors
 	default_color = '#cc99cc',
@@ -90,49 +91,45 @@ conky.config = {
 conky.text = [[
 
 ${color1}${font Stardate_81316:bold:size=15}$nodename$color$font
-  ${color1}User :$color ${goto 100}${exec awk -F: '{ print $1}' /etc/passwd | grep 'ryan'}
-  ${color1}Uptime:$color ${goto 100}$uptime
-
+	${color1}User :$color ${goto 100}${exec awk -F: '{ print $1}' /etc/passwd | grep 'ryan'}
+	${color1}Uptime:$color ${goto 100}$uptime
 $hr
-${color1}${font Stardate_81316:bold:size=9}Power & Battery$color$font
-  ${color1}Battery    :$color ${goto 100}${battery_percent}% ${alignr}${battery_bar 10,235}
-  ${color1}AC Adapter :$color ${goto 100}${acpiacadapter}
-
+${color1}${font Stardate_81316:bold:size=12}Power & Battery$color$font
+	${color1}Battery    :$color ${goto 100}${battery_percent}% ${alignr}${battery_bar 10,235}
+	${color1}AC Adapter :$color ${goto 100}${acpiacadapter}
 $hr
-${color1}${font Stardate_81316:bold:size=9}System Stats$color$font
-  ${color1}CPU0$color ${goto 100}${cpu cpu0}% ${alignr}${cpubar cpu0 10,235}
-  ${color1}${cpugraph cpu0 50,490 000000 ffffff}${color}
-  
-  ${color1}CPU1$color ${goto 100}${cpu cpu1}% ${alignr}${cpubar cpu1 10,235}
-  ${color1}${cpugraph cpu1 50,490 000000 ffffff}${color}
-  ${color1}Frequency  :$color ${goto 100}$freq MHz
-  ${color1}CPU Temp   :$color ${goto 100}${acpitemp}C
-  ${color1}HDD Temp   :$color ${goto 100}${hddtemp /dev/sda}C
-  ${color1}Cached     :$color ${goto 100}$cached
-  
-  ${color1}RAM Usage  :$color ${goto 100}$memperc% ${alignr}${membar 10,235}
-  ${color1}Swap Usage :$color ${goto 100}$swapperc% ${alignr}${swapbar 10,235}
+${color1}${font Stardate_81316:bold:size=12}System Stats$color$font
+	${color1}CPU0$color ${goto 100}${cpu cpu0}% ${alignr}${cpubar cpu0 10,235}
+	${color1}${cpugraph cpu0 50,490 000000 ffffff}${color}
 
+	${color1}CPU1$color ${goto 100}${cpu cpu1}% ${alignr}${cpubar cpu1 10,235}
+	${color1}${cpugraph cpu1 50,490 000000 ffffff}${color}
+	${color1}Frequency  :$color ${goto 100}$freq MHz
+	${color1}CPU Temp   :$color ${goto 100}${acpitemp}C
+	${color1}HDD Temp   :$color ${goto 100}${hddtemp /dev/sda}C
+	${color1}Cached     :$color ${goto 100}$cached
+
+	${color1}RAM Usage  :$color ${goto 100}$memperc% ${alignr}${membar 10,235}
+	${color1}Swap Usage :$color ${goto 100}$swapperc% ${alignr}${swapbar 10,235}
 $hr
-${color1}${font Stardate_81316:bold:size=9}File Systems$color$font
-  ${goto 100}/dev/sda
-  ${color1}${diskiograph_read /dev/sda 50,200 000000 ffffff} ${alignr}${color1}${diskiograph_write /dev/sda 50,200 000000 ffffff}
-  ${color1}Read: ${diskio_read sda} ${alignr}Write: ${diskio_write sda}$color
+${color1}${font Stardate_81316:bold:size=12}File Systems$color$font
+	${goto 100}/dev/sda
+	${color1}${diskiograph_read /dev/sda 50,200 000000 ffffff} ${alignr}${color1}${diskiograph_write /dev/sda 50,200 000000 ffffff}
+	${color1}Read: ${diskio_read sda} ${alignr}Write: ${diskio_write sda}$color
 
-  ${color1}Root $color ${goto 100}${fs_free /}/${fs_size /} (${fs_free_perc /}%) ${alignr}${fs_bar 10,235 /}
-  ${color1}Home $color ${goto 100}${fs_free /home}/${fs_size /home} (${fs_free_perc /home}%) ${alignr}${fs_bar 10,235 /home}
-
+	${color1}Root $color ${goto 100}${fs_free /}/${fs_size /} (${fs_free_perc /}%) ${alignr}${fs_bar 10,235 /}
+	${color1}Home $color ${goto 100}${fs_free /home}/${fs_size /home} (${fs_free_perc /home}%) ${alignr}${fs_bar 10,235 /home}
 $hr
-${color1}${font Stardate_81316:bold:size=9}Networking$color$font
-  ${color1}Interface:$color ${goto 100}wlp2s0
-  ${color1}Strength   :$color ${goto 100}${wireless_link_qual_perc wlp2s0}% ${alignr}${wireless_link_bar 10,235 wlp2s0}
-  ${color1}Bit Rate   :$color ${goto 100}${wireless_bitrate wlp2s0}
-  ${color1}IP Address :$color ${goto 100}${addr wlp2s0}
-  ${color1}Gateway    :$color ${goto 100}${gw_ip}
+${color1}${font Stardate_81316:bold:size=12}Networking$color$font
+	${color1}Interface:$color ${goto 100}wlp2s0
+	${color1}Strength   :$color ${goto 100}${wireless_link_qual_perc wlp2s0}% ${alignr}${wireless_link_bar 10,235 wlp2s0}
+	${color1}Bit Rate   :$color ${goto 100}${wireless_bitrate wlp2s0}
+	${color1}IP Address :$color ${goto 100}${addr wlp2s0}
+	${color1}Gateway    :$color ${goto 100}${gw_ip}
 
-  ${color}Down:$color ${downspeed wlp2s0} kB/s ${alignr}${color}Up:$color ${upspeed wlp2s0} kB/s${color1} 
-  ${downspeedgraph wlp2s0 50,200 000000 ffffff} ${alignr}${upspeedgraph wlp2s0 50,200 000000 ffffff}$color
-  Total: ${totaldown wlp2s0} ${alignr}Total: ${totalup wlp2s0}
+	${color}Down:$color ${downspeed wlp2s0} kB/s ${alignr}${color}Up:$color ${upspeed wlp2s0} kB/s${color1} 
+	${downspeedgraph wlp2s0 50,200 000000 ffffff} ${alignr}${upspeedgraph wlp2s0 50,200 000000 ffffff}$color
+	${color1}Total: $color${totaldown wlp2s0} ${alignr}${color1}Total: $color${totalup wlp2s0}
 #$hr
 
 #${color1}Processes$color
