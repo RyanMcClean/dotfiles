@@ -28,9 +28,9 @@ conky.config = {
 -- general positioning
 	alignment = 'middle_left',
 	gap_x = 17,
-	gap_y = 20,
-    minimum_height = 880,
-    minimum_width = 495,
+	gap_y = 15,
+    maximum_width = 495,
+	minimum_height = 880,
 
 -- run in the background (daemonize)
 	background = false,
@@ -67,9 +67,8 @@ conky.config = {
 	double_buffer = true,
 
 --use_space yes
-	use_space = true,
 	use_xft = true,
-    font = 'Stardate_81316:size=12',
+    font = 'Final Frontier Old Style:size=10',
 
 -- colors
 	default_color = '#cc99cc',
@@ -90,15 +89,15 @@ conky.config = {
 
 conky.text = [[
 
-${color1}${font Stardate_81316:bold:size=15}$nodename$color$font
+${color1}${font Final Frontier Old Style:bold:size=15}$nodename$color$font
 	${color1}User :$color ${goto 100}${exec awk -F: '{ print $1}' /etc/passwd | grep 'ryan'}
 	${color1}Uptime:$color ${goto 100}$uptime
 $hr
-${color1}${font Stardate_81316:bold:size=12}Power & Battery$color$font
+${color1}${font Final Frontier Old Style:bold:size=12}Power & Battery$color$font
 	${color1}Battery    :$color ${goto 100}${battery_percent}% ${alignr}${battery_bar 10,235}
 	${color1}AC Adapter :$color ${goto 100}${acpiacadapter}
 $hr
-${color1}${font Stardate_81316:bold:size=12}System Stats$color$font
+${color1}${font Final Frontier Old Style:bold:size=12}System Stats$color$font
 	${color1}CPU0$color ${goto 100}${cpu cpu0}% ${alignr}${cpubar cpu0 10,235}
 	${color1}${cpugraph cpu0 50,490 000000 ffffff}${color}
 
@@ -112,7 +111,7 @@ ${color1}${font Stardate_81316:bold:size=12}System Stats$color$font
 	${color1}RAM Usage  :$color ${goto 100}$memperc% ${alignr}${membar 10,235}
 	${color1}Swap Usage :$color ${goto 100}$swapperc% ${alignr}${swapbar 10,235}
 $hr
-${color1}${font Stardate_81316:bold:size=12}File Systems$color$font
+${color1}${font Final Frontier Old Style:bold:size=12}File Systems$color$font
 	${goto 100}/dev/sda
 	${color1}${diskiograph_read /dev/sda 50,200 000000 ffffff} ${alignr}${color1}${diskiograph_write /dev/sda 50,200 000000 ffffff}
 	${color1}Read: ${diskio_read sda} ${alignr}Write: ${diskio_write sda}$color
@@ -120,7 +119,7 @@ ${color1}${font Stardate_81316:bold:size=12}File Systems$color$font
 	${color1}Root $color ${goto 100}${fs_free /}/${fs_size /} (${fs_free_perc /}%) ${alignr}${fs_bar 10,235 /}
 	${color1}Home $color ${goto 100}${fs_free /home}/${fs_size /home} (${fs_free_perc /home}%) ${alignr}${fs_bar 10,235 /home}
 $hr
-${color1}${font Stardate_81316:bold:size=12}Networking$color$font
+${color1}${font Final Frontier Old Style:bold:size=12}Networking$color$font
 	${color1}Interface:$color ${goto 100}wlp2s0
 	${color1}Strength   :$color ${goto 100}${wireless_link_qual_perc wlp2s0}% ${alignr}${wireless_link_bar 10,235 wlp2s0}
 	${color1}Bit Rate   :$color ${goto 100}${wireless_bitrate wlp2s0}
