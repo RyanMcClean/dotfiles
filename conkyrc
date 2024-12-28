@@ -68,7 +68,7 @@ conky.config = {
 
 --use_space yes
 	use_xft = true,
-    font = 'Final Frontier Old Style:size=10',
+    font = 'Final Frontier Old Style:size=13',
 
 -- colors
 	default_color = '#cc99cc',
@@ -76,55 +76,55 @@ conky.config = {
 	default_shade_color = 'black',
 	color0 = '#cc99cc',
 	color1 = '#9999ff',
-	color2 = 'yellow',
+	color2 = '#d6a444',
 	color3 = 'green',
 	color4 = 'blue',
 	color5 = 'violet',
 	color6 = 'white',
 	color7 = 'lightgrey',
 	color8 = 'grey',
-	color9 = 'black'
+	color9 = 'black',
 
 };
 
 conky.text = [[
 
-${color1}${font Final Frontier Old Style:bold:size=15}$nodename$color$font
-	${color1}User :$color ${goto 100}${exec awk -F: '{ print $1}' /etc/passwd | grep 'ryan'}
-	${color1}Uptime:$color ${goto 100}$uptime
+${color2}${font Final Frontier Old Style:bold:size=15}${uppercase $nodename}$color$font
+	${color1}User :$color ${goto 105}${exec awk -F: '{ print $1}' /etc/passwd | grep 'ryan'}
+	${color1}Uptime:$color ${goto 105}$uptime
 $hr
 ${color1}${font Final Frontier Old Style:bold:size=12}Power & Battery$color$font
-	${color1}Battery    :$color ${goto 100}${battery_percent}% ${alignr}${battery_bar 10,235}
-	${color1}AC Adapter :$color ${goto 100}${acpiacadapter}
+	${color1}Battery    :$color ${goto 105}${battery_percent}% ${alignr}${battery_bar 10,235}
+	${color1}AC Adapter :$color ${goto 105}${acpiacadapter}
 $hr
 ${color1}${font Final Frontier Old Style:bold:size=12}System Stats$color$font
-	${color1}CPU0$color ${goto 100}${cpu cpu0}% ${alignr}${cpubar cpu0 10,235}
+	${color1}CPU0$color ${goto 105}${cpu cpu0}% ${alignr}${cpubar cpu0 10,235}
 	${color1}${cpugraph cpu0 50,490 000000 ffffff}${color}
 
-	${color1}CPU1$color ${goto 100}${cpu cpu1}% ${alignr}${cpubar cpu1 10,235}
+	${color1}CPU1$color ${goto 105}${cpu cpu1}% ${alignr}${cpubar cpu1 10,235}
 	${color1}${cpugraph cpu1 50,490 000000 ffffff}${color}
-	${color1}Frequency  :$color ${goto 100}$freq MHz
-	${color1}CPU Temp   :$color ${goto 100}${acpitemp}C
-	${color1}HDD Temp   :$color ${goto 100}${hddtemp /dev/sda}C
-	${color1}Cached     :$color ${goto 100}$cached
+	${color1}Frequency  :$color ${goto 105}$freq MHz
+	${color1}CPU Temp   :$color ${goto 105}${acpitemp}C
+	${color1}HDD Temp   :$color ${goto 105}${hddtemp /dev/sda}C
+	${color1}Cached     :$color ${goto 105}$cached
 
-	${color1}RAM Usage  :$color ${goto 100}$memperc% ${alignr}${membar 10,235}
-	${color1}Swap Usage :$color ${goto 100}$swapperc% ${alignr}${swapbar 10,235}
+	${color1}RAM Usage  :$color ${goto 105}$memperc% ${alignr}${membar 10,235}
+	${color1}Swap Usage :$color ${goto 105}$swapperc% ${alignr}${swapbar 10,235}
 $hr
 ${color1}${font Final Frontier Old Style:bold:size=12}File Systems$color$font
-	${goto 100}/dev/sda
+	${goto 105}/dev/sda
 	${color1}${diskiograph_read /dev/sda 50,200 000000 ffffff} ${alignr}${color1}${diskiograph_write /dev/sda 50,200 000000 ffffff}
 	${color1}Read: ${diskio_read sda} ${alignr}Write: ${diskio_write sda}$color
 
-	${color1}Root $color ${goto 100}${fs_free /}/${fs_size /} (${fs_free_perc /}%) ${alignr}${fs_bar 10,235 /}
-	${color1}Home $color ${goto 100}${fs_free /home}/${fs_size /home} (${fs_free_perc /home}%) ${alignr}${fs_bar 10,235 /home}
+	${color1}Root $color ${goto 105}${fs_free /}/${fs_size /} (${fs_free_perc /}%) ${alignr}${fs_bar 10,235 /}
+	${color1}Home $color ${goto 105}${fs_free /home}/${fs_size /home} (${fs_free_perc /home}%) ${alignr}${fs_bar 10,235 /home}
 $hr
 ${color1}${font Final Frontier Old Style:bold:size=12}Networking$color$font
-	${color1}Interface:$color ${goto 100}wlp2s0
-	${color1}Strength   :$color ${goto 100}${wireless_link_qual_perc wlp2s0}% ${alignr}${wireless_link_bar 10,235 wlp2s0}
-	${color1}Bit Rate   :$color ${goto 100}${wireless_bitrate wlp2s0}
-	${color1}IP Address :$color ${goto 100}${addr wlp2s0}
-	${color1}Gateway    :$color ${goto 100}${gw_ip}
+	${color1}Interface:$color ${goto 105}wlp2s0
+	${color1}Strength   :$color ${goto 105}${wireless_link_qual_perc wlp2s0}% ${alignr}${wireless_link_bar 10,235 wlp2s0}
+	${color1}Bit Rate   :$color ${goto 105}${wireless_bitrate wlp2s0}
+	${color1}IP Address :$color ${goto 105}${addr wlp2s0}
+	${color1}Gateway    :$color ${goto 105}${gw_ip}
 
 	${color}Down:$color ${downspeed wlp2s0} kB/s ${alignr}${color}Up:$color ${upspeed wlp2s0} kB/s${color1} 
 	${downspeedgraph wlp2s0 50,200 000000 ffffff} ${alignr}${upspeedgraph wlp2s0 50,200 000000 ffffff}$color
