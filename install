@@ -16,7 +16,7 @@ defaults() {
 # verbose ln, because `ln -v` is not portable
 symlink() {
 	printf '%55s -> %s\n' "${1/#$HOME/\~}" "${2/#$HOME/\~}"
-	ln -nsf "$@"
+	ln -nf "$@"
 }
 
 # Link dotfiles
@@ -27,6 +27,7 @@ dotfiles=(
 	gitconfig
 	bash_aliases
 	hushlogin
+	conkyrc
 )
 for f in "${dotfiles[@]}"; do
 	[[ -d ~/.$f && ! -L ~/.$f ]] && rm -r ~/."$f"
