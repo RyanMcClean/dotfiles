@@ -32,3 +32,5 @@ for f in "${dotfiles[@]}"; do
 	[[ -d ~/.$f && ! -L ~/.$f ]] && rm -r ~/."$f"
 	symlink "$PWD/$f" ~/."$f"
 done
+
+echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-$USER-for-sudo-password"
