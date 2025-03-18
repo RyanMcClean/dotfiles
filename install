@@ -7,6 +7,9 @@
 # Date: May 25, 2012
 # License: MIT
 
+# Source .env file
+. ./env
+
 # makes "defaults" command print to screen
 defaults() {
 	echo defaults "$@"
@@ -19,7 +22,7 @@ symlink() {
 	ln -nf "$@"
 }
 
-# Link dotfiles
+# Link dotfiles and folders
 dotfiles=(
 	bash_completion
 	bash_profile
@@ -28,10 +31,25 @@ dotfiles=(
 	bash_aliases
 	hushlogin
 	conkyrc
+	duckdns
 )
 for f in "${dotfiles[@]}"; do
 	[[ -d ~/.$f && ! -L ~/.$f ]] && rm -r ~/."$f"
-	symlink "$PWD/$f" ~/."$f"
+	[[ -f ./"$f" ]] && symlink "$PWD/$f" ~/."$f"
+	[[ -d ./"$f" ]] && cp -r "$PWD/$f" ~/."$f"
 done
 
 echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-$USER-for-sudo-password"
+
+
+# Set up crontab
+
+crontab -l > crontab_new
+
+if [ -f ~/.local/bin/yt-dlp ]; then
+	echo "0 3 * * * ~/.local/bin/yt-dlp --config-location ~/dotfiles/dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite > ~/dlp.log" >> ./crontab_new
+fi
+echo "*/5 * * * * ~/.duckdns/duck.sh >/dev/null 2>&1" >> ./crontab_new
+
+crontab ./crontab_new
+rm ./crontab_new
