@@ -22,26 +22,29 @@ symlink() {
 	ln -nf "$@"
 }
 
-# Link dotfiles and folders
+# Create array of files to link
 dotfiles=($(find ./files/* -maxdepth 1 -type f ! -type d -printf '%f\n'))
-# echo "${dotfiles[@]}"
-
 
 # Link dotfiles
 for f in "${dotfiles[@]}"; do
-	# echo ${f}
+	# Check if a directory with file name exists and a symlink doesn't exist
 	[[ -d ~/."${f}" && ! -L ~/."${f}" ]] && rm -r ~/."${f}"
+	# Check file exists in files directory
 	[[ -f ./files/"${f}" ]] && symlink "${PWD}/files/${f}" /home/${USER}/."${f}"
 done
 
+# Create array of folders to link
 dotfolders=($(find ./files/* -maxdepth 1 -type d ! -type f -printf '%f\n'))
-# echo "${dotfolders[@]}"
 
 # Link dotfolders
 for f in "${dotfolders[@]}"; do
+	# Create array of files in folder
 	folder_files=($(find ./files/"${f}"/* -maxdepth 1 -type f ! -type d -printf '%f\n'))
-	[[ -d ./files/"${f}" ]] && ! [[ -d "/home/${USER}/.${f}" ]] && mkdir "/home/${USER}/.${f}" && symlink "${PWD}/files/${f}/*" /home/${USER}/."${f}"/
+	#Check if folder exists in files directory, and doesn't exist in home directory
+	[[ -d ./files/"${f}" ]] && ! [[ -d "/home/${USER}/.${f}" ]] && mkdir "/home/${USER}/.${f}"
+	# check if directory exists in home directory
 	[[ -d "/home/${USER}/.${f}" ]] && for file in "${folder_files[@]}"; do
+		# Check file exists in files directory
 		[[ -f ./files/"${f}"/"${file}" ]] && symlink "${PWD}/files/${f}/${file}" /home/${USER}/."${f}"/"${file}"
 	done
 done
@@ -54,13 +57,19 @@ echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-
 YT_DLP_STRING="0 3 * * * /home/${USER}/.local/bin/yt-dlp --config-location ~/dotfiles/dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite > /home/${USER}/dlp.log"
 DUCK_DNS_STRING="*/5 * * * * /home/${USER}/.duckdns/duck.sh >/dev/null 2>&1"
 
+# Save current crontab to file
 crontab -l > ./crontab_new
 
-if [ -f /home/${USER}/.local/bin/yt-dlp ] && ! grep -q "yt-dlp" ./crontab_new ; then
-	echo "${YT_DLP_STRING}" >> ./crontab_new
-fi
-if [ -f /home/${USER}/.duckdns/duck.sh ] && ! grep -q "duckdns" ./crontab_new ; then
-	echo "${DUCK_DNS_STRING}" >> ./crontab_new
+# Check if yt-dlp and duckdns are already in crontab
+if ! grep -q "yt-dlp|duckdns" ./crontab_new ; then
+	# Check if yt-dlp and duckdns are installed
+	if [ -f /home/${USER}/.local/bin/yt-dlp ] ; then
+		echo "${YT_DLP_STRING}" >> ./crontab_new
+	fi
+	if [ -f /home/${USER}/.duckdns/duck.sh ] ; then
+		echo "${DUCK_DNS_STRING}" >> ./crontab_new
+	fi
 fi
 
+# Install new crontab and delete temp file if installation successful
 crontab ./crontab_new && rm ./crontab_new
