@@ -8,7 +8,7 @@
 # License: MIT
 
 # Source .env file
-. ./env
+. ./.env
 
 # makes "defaults" command print to screen
 defaults() {
@@ -18,38 +18,49 @@ defaults() {
 
 # verbose ln, because `ln -v` is not portable
 symlink() {
-	printf '%55s -> %s\n' "${1/#$HOME/\~}" "${2/#$HOME/\~}"
+	printf '%55s -> %s\n' "${1/#${HOME}/\~}" "${2/#${HOME}/\~}"
 	ln -nf "$@"
 }
 
 # Link dotfiles and folders
-dotfiles=(
-	bash_completion
-	bash_profile
-	bashrc
-	gitconfig
-	bash_aliases
-	hushlogin
-	conkyrc
-	duckdns
-)
+dotfiles=($(find ./files/* -maxdepth 1 -type f ! -type d -printf '%f\n'))
+# echo "${dotfiles[@]}"
+
+
+# Link dotfiles
 for f in "${dotfiles[@]}"; do
-	[[ -d ~/.$f && ! -L ~/.$f ]] && rm -r ~/."$f"
-	[[ -f ./"$f" ]] && symlink "$PWD/$f" ~/."$f"
-	[[ -d ./"$f" ]] && cp -r "$PWD/$f" ~/."$f"
+	# echo ${f}
+	[[ -d ~/."${f}" && ! -L ~/."${f}" ]] && rm -r ~/."${f}"
+	[[ -f ./files/"${f}" ]] && symlink "${PWD}/files/${f}" /home/${USER}/."${f}"
 done
 
-echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-$USER-for-sudo-password"
+dotfolders=($(find ./files/* -maxdepth 1 -type d ! -type f -printf '%f\n'))
+# echo "${dotfolders[@]}"
+
+# Link dotfolders
+for f in "${dotfolders[@]}"; do
+	folder_files=($(find ./files/"${f}"/* -maxdepth 1 -type f ! -type d -printf '%f\n'))
+	[[ -d ./files/"${f}" ]] && ! [[ -d "/home/${USER}/.${f}" ]] && mkdir "/home/${USER}/.${f}" && symlink "${PWD}/files/${f}/*" /home/${USER}/."${f}"/
+	[[ -d "/home/${USER}/.${f}" ]] && for file in "${folder_files[@]}"; do
+		[[ -f ./files/"${f}"/"${file}" ]] && symlink "${PWD}/files/${f}/${file}" /home/${USER}/."${f}"/"${file}"
+	done
+done
+
+# Set up user as sudoer without password
+echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-${USER}-for-sudo-password" > /dev/null
 
 
 # Set up crontab
+YT_DLP_STRING="0 3 * * * /home/${USER}/.local/bin/yt-dlp --config-location ~/dotfiles/dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite > /home/${USER}/dlp.log"
+DUCK_DNS_STRING="*/5 * * * * /home/${USER}/.duckdns/duck.sh >/dev/null 2>&1"
 
-crontab -l > crontab_new
+crontab -l > ./crontab_new
 
-if [ -f ~/.local/bin/yt-dlp ]; then
-	echo "0 3 * * * ~/.local/bin/yt-dlp --config-location ~/dotfiles/dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite > ~/dlp.log" >> ./crontab_new
+if [ -f /home/${USER}/.local/bin/yt-dlp ] && ! grep -q "yt-dlp" ./crontab_new ; then
+	echo "${YT_DLP_STRING}" >> ./crontab_new
 fi
-echo "*/5 * * * * ~/.duckdns/duck.sh >/dev/null 2>&1" >> ./crontab_new
+if [ -f /home/${USER}/.duckdns/duck.sh ] && ! grep -q "duckdns" ./crontab_new ; then
+	echo "${DUCK_DNS_STRING}" >> ./crontab_new
+fi
 
-crontab ./crontab_new
-rm ./crontab_new
+crontab ./crontab_new && rm ./crontab_new

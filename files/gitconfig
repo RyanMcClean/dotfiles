@@ -1,6 +1,6 @@
 [user]
 	name = Ryan McClean
-	email = ryan1328@hotmail.com
+	email = ${USER_EMAIL}
 [color]
 	ui = auto
 [push]
