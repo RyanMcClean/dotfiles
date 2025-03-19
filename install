@@ -58,6 +58,7 @@ YT_DLP_STRING="0 3 * * * /home/${USER}/.local/bin/yt-dlp --config-location ~/dot
 DUCK_DNS_STRING="*/5 * * * * /home/${USER}/.duckdns/duck.sh >/dev/null 2>&1"
 
 # Save current crontab to file
+crontab -l > /dev/null 2>&1
 crontab -l > ./crontab_new
 
 # Check if yt-dlp and duckdns are already in crontab
@@ -73,3 +74,8 @@ fi
 
 # Install new crontab and delete temp file if installation successful
 crontab ./crontab_new && rm ./crontab_new
+
+# Copy .env file to local servers
+for server in "${LOCAL_SERVERS[@]}"; do
+	scp .env "${server}":~/dotfiles/.env > /dev/null && echo ".env file copied to ${server}"
+done
