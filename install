@@ -54,7 +54,7 @@ echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-
 
 
 # Set up crontab
-YT_DLP_STRING="0 3 * * * /home/${USER}/.local/bin/yt-dlp --config-location ~/dotfiles/dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite > /home/${USER}/dlp.log"
+YT_DLP_STRING="0 3 * * * /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite > /home/${USER}/dlp.log"
 DUCK_DNS_STRING="*/5 * * * * /home/${USER}/.duckdns/duck.sh >/dev/null 2>&1"
 
 # Save current crontab to file
@@ -62,7 +62,8 @@ crontab -l > /dev/null 2>&1
 crontab -l > ./crontab_new
 
 # Check if yt-dlp and duckdns are already in crontab
-if ! grep -q "yt-dlp|duckdns" ./crontab_new ; then
+if ! grep -q -e "yt-dlp" -e "duckdns" ./crontab_new ; then
+	echo "Installing new commands to crontab"
 	# Check if yt-dlp and duckdns are installed
 	if [ -f /home/${USER}/.local/bin/yt-dlp ] ; then
 		echo "${YT_DLP_STRING}" >> ./crontab_new
