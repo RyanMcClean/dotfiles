@@ -1,0 +1,11 @@
+For testing local network speed:
+"dd if=/dev/zero bs=1M count=10000 | ssh ${SERVER_TO_TEST_CONNECTION_WITH} 'dd od=/dev/null'"
+
+Let’s understand each part before the pipe:
+
+   - if=/dev/zero specifies the input file as /dev/zero, which generates an endless stream of zeros
+   - bs=1M sets the block size to 1 megabyte
+   - count=10000 specifies the number of blocks to be transferred, creating a ~10GB file
+
+The results of the dd command are piped through the ssh tunnel, this data is written to 'dd of=/dev/null'
+Data transfer information is then displayed on the screen
