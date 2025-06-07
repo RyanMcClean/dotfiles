@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+
+# This script will set up a default SSH config file for the user. 
+# This depends on having a valid and filled out .env file. 
+# Please ensure that the .env file is valid before running this script.
+
+. ./.env
+# Create the .ssh directory if it doesn't exist
+if [ ! -d "/home/${USER}/.ssh" ]; then
+    mkdir -p "/home/${USER}/.ssh"
+fi
+
+# Create the default SSH config file
+echo "# Default SSH config file, created by default_ssh_config.sh" > "/home/${USER}/.ssh/config"
+echo "" >> "/home/${USER}/.ssh/config"
+echo "# The first thing this file will do is check if the server if reachable on the local network" >> "/home/${USER}/.ssh/config"
+echo "# If it isn't reachable, it will use the DuckDNS URL as a ProxyJump" >> "/home/${USER}/.ssh/config"
+echo "# It should be noted that this is an open invitation to DNS errors, so if you are having issues, its probably DNS related." >> "/home/${USER}/.ssh/config"
+echo "" >> "/home/${USER}/.ssh/config"
+for server in "${LOCAL_SERVERS[@]}"; do
+    if [[ -n "${server}" && "${server}" != $(hostname) ]]; then
+        echo "# SSH config for ${server}" >> "/home/${USER}/.ssh/config"
+        echo -e "Match host ${server} !exec \"ping -qc 3 ${server}.local &> /dev/null\"" >> "/home/${USER}/.ssh/config"
+        echo "    ProxyJump ${DUCK_URLS[0]}.duckdns.org" >> "/home/${USER}/.ssh/config"
+        echo "" >> "/home/${USER}/.ssh/config"
+
+        echo "Host ${server}" >> "/home/${USER}/.ssh/config"
+        echo "    HostName ${server}.local" >> "/home/${USER}/.ssh/config"
+        echo "    User ${USER}" >> "/home/${USER}/.ssh/config"
+        echo "    IdentityFile ~/.ssh/id_rsa" >> "/home/${USER}/.ssh/config"
+        echo "" >> "/home/${USER}/.ssh/config"
+    fi
+done
