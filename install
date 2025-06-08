@@ -9,7 +9,11 @@
 
 # Run tests first to ensure .env file is valid
 if [ -f ./tests ]; then
-	./tests || echo "Tests failed. Please fix the issues before proceeding." && exit 1
+	./tests
+	if [ $? -ne 0 ]; then
+		echo "Error: Tests failed. Please fix the issues before proceeding."
+		exit 1
+	fi
 else
 	echo "Error: tests not found. Please ensure it exists in the current directory."
 	exit 1
