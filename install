@@ -7,6 +7,22 @@
 # Date: May 25, 2012
 # License: MIT
 
+# Run tests first to ensure .env file is valid
+if [ -f ./tests ]; then
+	./tests || echo "Tests failed. Please fix the issues before proceeding." && exit 1
+else
+	echo "Error: tests not found. Please ensure it exists in the current directory."
+	exit 1
+fi
+
+# Create default ssh config file
+if [ -f ./default_ssh_config ]; then
+	./default_ssh_config
+else
+	echo "Error: default_ssh_config not found. Please ensure it exists in the current directory."
+	exit 1
+fi
+
 # Source .env file
 . ./.env
 
@@ -39,6 +55,9 @@ dotfolders=($(find ./files/* -maxdepth 1 -type d ! -type f -printf '%f\n'))
 # Link dotfolders
 for f in "${dotfolders[@]}"; do
 	# Create array of files in folder
+	if [[ "${f}" == "duckdns" && !-n ${DUCK_TOKEN} ]]; then
+		continue
+	fi
 	folder_files=($(find ./files/"${f}"/* -maxdepth 1 -type f ! -type d -printf '%f\n'))
 	#Check if folder exists in files directory, and doesn't exist in home directory
 	[[ -d ./files/"${f}" ]] && ! [[ -d "/home/${USER}/.${f}" ]] && mkdir "/home/${USER}/.${f}"
@@ -54,8 +73,13 @@ echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-
 
 
 # Set up crontab
-YT_DLP_STRING="0 3 * * 0 /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite &> /home/${USER}/dlp.log"
-DUCK_DNS_STRING="*/5 * * * * cd /home/${USER}/.duckdns/ && ./duck.sh >/dev/null 2>&1"
+if [[ if /home/${USER}/.local/bin/yt-dlp ]]; then
+	YT_DLP_STRING="0 3 * * 0 /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite &> /home/${USER}/dlp.log"
+fi
+
+if [[ -n "${DUCK_TOKEN}" ]]; then
+	DUCK_DNS_STRING="*/5 * * * * cd /home/${USER}/.duckdns/ && ./duck.sh >/dev/null 2>&1"
+fi
 
 # Save current crontab to file
 crontab -l > /dev/null 2>&1

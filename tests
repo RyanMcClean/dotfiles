@@ -1,0 +1,38 @@
+#!/usr/bin/bash
+
+# First test the .env file to ensure it is valid and filled out.
+if [ -f ./.env ]; then
+    . ./.env
+else
+    echo "Error: .env file not found. Please create a valid .env file."
+    exit 1
+fi
+
+# if [[ -n "${DUCK_TOKEN[@]}" ]]; then
+#     echo "DuckDNS token is set."
+# else
+#     echo "Error: DUCK_TOKEN is not set in the .env file."
+#     exit 1
+# fi
+
+# if [[ -n "${LOCAL_SERVERS[@]}" ]]; then
+#     echo "Local servers are set."
+# else
+#     echo "Error: LOCAL_SERVERS is not set in the .env file."
+#     exit 1
+# fi
+
+# if [[ -n "${DUCK_URLS[@]}" ]]; then
+#     echo "DuckDNS URLs are set."
+# else
+#     echo "Error: DUCK_URLS is not set in the .env file."
+#     exit 1
+# fi
+
+# if [[ -n "${USER_EMAIL}" ]]; then
+#     echo "User email is set."
+# else
+#     echo "Error: USER_EMAIL is not set in the .env file."
+#     exit 1
+# fi
+
