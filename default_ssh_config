@@ -20,11 +20,11 @@ echo "" >> "/home/${USER}/.ssh/config"
 for server in "${LOCAL_SERVERS[@]}"; do
     if [[ -n "${server}" && "${server}" != $(hostname) ]]; then
         echo "# SSH config for ${server}" >> "/home/${USER}/.ssh/config"
-        echo -e "Match host ${server} !exec \"ping -qc 3 ${server}.local &> /dev/null\"" >> "/home/${USER}/.ssh/config"
+        echo -e "Match host ${server}* !exec \"ping -qc 3 ${server}.local &> /dev/null\"" >> "/home/${USER}/.ssh/config"
         echo "    ProxyJump ${DUCK_URLS[0]}.duckdns.org" >> "/home/${USER}/.ssh/config"
         echo "" >> "/home/${USER}/.ssh/config"
 
-        echo "Host ${server}" >> "/home/${USER}/.ssh/config"
+        echo "Host ${server}*" >> "/home/${USER}/.ssh/config"
         echo "    HostName ${server}.local" >> "/home/${USER}/.ssh/config"
         echo "    User ${USER}" >> "/home/${USER}/.ssh/config"
         echo "    IdentityFile ~/.ssh/id_rsa" >> "/home/${USER}/.ssh/config"
