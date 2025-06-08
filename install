@@ -59,7 +59,7 @@ dotfolders=($(find ./files/* -maxdepth 1 -type d ! -type f -printf '%f\n'))
 # Link dotfolders
 for f in "${dotfolders[@]}"; do
 	# Create array of files in folder
-	if [[ "${f}" == "duckdns" && !-n ${DUCK_TOKEN} ]]; then
+	if [[ "${f}" == "duckdns" && ! -n ${DUCK_TOKEN} ]]; then
 		continue
 	fi
 	folder_files=($(find ./files/"${f}"/* -maxdepth 1 -type f ! -type d -printf '%f\n'))
@@ -77,7 +77,7 @@ echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-
 
 
 # Set up crontab
-if [[ if /home/${USER}/.local/bin/yt-dlp ]]; then
+if [[ -f /home/${USER}/.local/bin/yt-dlp ]]; then
 	YT_DLP_STRING="0 3 * * 0 /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite &> /home/${USER}/dlp.log"
 fi
 
@@ -108,5 +108,9 @@ crontab ./crontab_new && rm ./crontab_new
 
 # Copy .env file to local servers
 for server in "${LOCAL_SERVERS[@]}"; do
+	if [[ -z "${server}" || "${server}" == $(hostname) ]]; then
+		continue
+	fi
+	echo "Copying .env file to ${server}..."
 	scp .env "${server}":~/dotfiles/.env > /dev/null && echo ".env file copied to ${server}"
 done
