@@ -59,6 +59,13 @@ dotfiles=($(find ./files/* -maxdepth 1 -type f ! -type d -printf '%f\n'))
 
 # Link dotfiles
 for f in "${dotfiles[@]}"; do
+	if [[ "${f}" == "conkyrc" ]]; then
+		# Skip conkyrc if conky is not installed
+		if ! command -v conky &> /dev/null; then
+			echo "Conky is not installed, skipping conkyrc symlink."
+			continue
+		fi
+	fi
 	# Check if a directory with file name exists and a symlink doesn't exist
 	[[ -d ~/."${f}" && ! -L ~/."${f}" ]] && rm -r ~/."${f}"
 	# Check file exists in files directory
