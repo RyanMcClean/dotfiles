@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+compare_files() {
+    local_file="$1"
+    remote_file="$2"
+    server="$3"
+    local_content=$(cat "$local_file")
+    remote_content=$(ssh ${server} "cat ${remote_file}")
+
+    if ! cmp --silent <(echo "$local_content") <(echo "$remote_content"); then
+        return 1
+    fi
+}

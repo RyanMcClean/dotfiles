@@ -28,7 +28,19 @@ else
 fi
 
 # Source .env file
-. ./.env
+if [ -f ./.env ]; then
+	. ./.env
+else
+	echo "Error: .env file not found. Please create it before running the script."
+	exit 1
+fi
+
+if [ -f ./helpers ]; then
+	. ./helpers
+else
+	echo "Error: helpers file not found. Please ensure it exists in the current directory."
+	exit 1
+fi
 
 # makes "defaults" command print to screen
 defaults() {
@@ -111,11 +123,21 @@ for server in "${LOCAL_SERVERS[@]}"; do
 	if [[ -z "${server}" || "${server}" == $(hostname) ]]; then
 		continue
 	fi
-	echo "Copying .env file to ${server}..."
-	scp .env "${server}":~/dotfiles/.env > /dev/null && echo ".env file copied to ${server}"
-	if [ $? -ne 0 ] && compgen -G "/home/${USER}/.ssh/*.pub" > /dev/null ; then
-		ssh-copy-id -i /home/${USER}/.ssh/*.pub "${server}" &> /dev/null && echo "SSH keys copied to ${server}"
+
+	if compare_files "./.env" "~/dotfiles/.env" "${server}" ; then
+		echo ".env file is already up to date on ${server}, skipping copy."
 	else 
-		echo $?
+		echo "Copying .env file to ${server}..."
+		scp .env "${server}":~/dotfiles/.env > /dev/null && echo ".env file copied to ${server}"
+	fi
+
+	if compgen -G "/home/${USER}/.ssh/*.pub" > /dev/null; then
+		if ! ssh -o PasswordAuthentication=no ${server} /bin/true; then
+			ssh-copy-id -i /home/${USER}/.ssh/*.pub "${server}" &> /dev/null && echo "SSH keys copied to ${server}"
+		else
+			echo "SSH keys already exist on ${server}, skipping..."
+		fi
+	else 
+		echo "NO SSH keys found, please create them first"
 	fi
 done
