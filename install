@@ -106,11 +106,16 @@ fi
 # Install new crontab and delete temp file if installation successful
 crontab ./crontab_new && rm ./crontab_new
 
-# Copy .env file to local servers
+# Copy .env file to local servers and id files
 for server in "${LOCAL_SERVERS[@]}"; do
 	if [[ -z "${server}" || "${server}" == $(hostname) ]]; then
 		continue
 	fi
 	echo "Copying .env file to ${server}..."
 	scp .env "${server}":~/dotfiles/.env > /dev/null && echo ".env file copied to ${server}"
+	if [ $? -ne 0 ] && compgen -G "/home/${USER}/.ssh/*.pub" > /dev/null ; then
+		ssh-copy-id -i /home/${USER}/.ssh/*.pub "${server}" &> /dev/null && echo "SSH keys copied to ${server}"
+	else 
+		echo $?
+	fi
 done
