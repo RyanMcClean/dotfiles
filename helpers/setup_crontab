@@ -1,0 +1,52 @@
+#!/usr/bin/bash
+
+setup_crontab() {
+
+    echo "Installing new commands to crontab"
+
+    # Step 1
+    # Conditionally set up crontab strings
+    if [[ -f /home/${USER}/.local/bin/yt-dlp ]]; then
+        YT_DLP_STRING="0 3 * * 0 /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite &> /home/${USER}/dlp.log"
+    fi
+    if [[ -n "${DUCK_TOKEN}" ]]; then
+        DUCK_DNS_STRING="*/5 * * * * cd /home/${USER}/.duckdns/ && ./duck.sh >/dev/null 2>&1"
+    fi
+    BACKUP_STRING="0 */2 * * * xargs sudo cp -rv -t /home/ryan_mcc/Backups/ < /home/ryan_mcc/dotfiles/Backups/file_list.txt"
+    if [[ -f /usr/bin/kopia ]]; then
+        KOPIA_STRING="@reboot kopia server start --without-password --insecure --address='0.0.0.0:8113' --shutdown-grace-period=30s --enable-actions"
+    fi
+
+    # Step 2
+    # Save current crontab to file
+    crontab -l > ./crontab_new
+
+    # Step 3
+    # Check if strings are already in crontab, if not then append to new crontab
+    if ! grep -q -e "yt-dlp" ./crontab_new ; then
+        if [ -f /home/${USER}/.local/bin/yt-dlp ] ; then
+            echo "Installing yt-dlp command in cron"
+            echo "${YT_DLP_STRING}" >> ./crontab_new
+        fi
+    fi
+    if ! grep -q -e "duckdns" ./crontab_new ; then
+        if [ -f /home/${USER}/.duckdns/duck.sh ] ; then
+            echo "Installing duckdns command in cron"
+            echo "${DUCK_DNS_STRING}" >> ./crontab_new
+        fi
+    fi
+    if ! grep -q -e "Backups" ./crontab_new ; then
+        echo "Installing backup command in cron"
+        echo "${BACKUP_STRING}" >> ./crontab_new
+    fi
+    if ! grep -q -e "kopia" ./crontab_new ; then
+        if [ -f /usr/bin/kopia ]; then
+            echo "Installing kopia command in cron"
+            echo "${KOPIA_STRING}" >> ./crontab_new
+        fi
+    fi
+
+    # Step 4
+    # Install new crontab and delete temp file if installation successful
+    crontab ./crontab_new && rm ./crontab_new
+}

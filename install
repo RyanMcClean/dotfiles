@@ -35,10 +35,17 @@ else
 	exit 1
 fi
 
-if [ -f ./helpers ]; then
-	. ./helpers
+if [ -f ./helpers/compare_files ]; then
+	. ./helpers/compare_files
 else
-	echo "Error: helpers file not found. Please ensure it exists in the current directory."
+	echo "Error: compare_files file not found. Please ensure it exists in the current directory."
+	exit 1
+fi
+
+if [ -f ./helpers/setup_crontab ]; then
+	. ./helpers/setup_crontab
+else
+	echo "Error: setup_crontab file not found. Please ensure it exists in the current directory."
 	exit 1
 fi
 
@@ -94,46 +101,8 @@ done
 # Set up user as sudoer without password
 echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-${USER}-for-sudo-password" > /dev/null
 
-
 # Set up crontab
-if [[ -f /home/${USER}/.local/bin/yt-dlp ]]; then
-	YT_DLP_STRING="0 3 * * 0 /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite &> /home/${USER}/dlp.log"
-fi
-
-if [[ -n "${DUCK_TOKEN}" ]]; then
-	DUCK_DNS_STRING="*/5 * * * * cd /home/${USER}/.duckdns/ && ./duck.sh >/dev/null 2>&1"
-fi
-
-# Backs up files listed in file_list.txt to /home/ryan_mcc/Backups every 2 hours
-BACKUP_STRING="0 */2 * * * xargs sudo cp -rv -t /home/ryan_mcc/Backups/ < /home/ryan_mcc/dotfiles/Backups/file_list.txt"
-
-# Save current crontab to file
-crontab -l > ./crontab_new
-
-# Check if yt-dlp string is already in crontab
-if ! grep -q -e "yt-dlp" ./crontab_new ; then
-	echo "Installing new commands to crontab"
-	# Check if yt-dlp and duckdns are installed
-	if [ -f /home/${USER}/.local/bin/yt-dlp ] ; then
-		echo "Installing yt-dlp command in cron"
-		echo "${YT_DLP_STRING}" >> ./crontab_new
-	fi
-fi
-# Check if duckdns string is already in crontab
-if ! grep -q -e "duckdns" ./contab_new ; then
-	if [ -f /home/${USER}/.duckdns/duck.sh ] ; then
-		echo "Installing duckdns command in cron"
-		echo "${DUCK_DNS_STRING}" >> ./crontab_new
-	fi
-fi
-# Check if backup string is already in crontab
-if ! grep -q -e "Backups" ./crontab_new ; then
-	echo "Installing backup command in cron"
-	echo "${BACKUP_STRING}" >> ./crontab_new
-fi
-
-# Install new crontab and delete temp file if installation successful
-crontab ./crontab_new && rm ./crontab_new
+setup_crontab
 
 # Copy .env file to local servers and id files
 for server in "${LOCAL_SERVERS[@]}"; do
