@@ -13,6 +13,7 @@ setup_crontab() {
         DUCK_DNS_STRING="*/5 * * * * cd /home/${USER}/.duckdns/ && ./duck.sh >/dev/null 2>&1"
     fi
     BACKUP_STRING="0 */2 * * * xargs sudo cp -rv -t /home/ryan_mcc/Backups/ < /home/ryan_mcc/dotfiles/Backups/file_list.txt"
+    APT_BACKUP_STRING="@reboot sudo dpkg --get-selections | grep -v deinstall | awk '{print $1}' > /home/${USER}/Backups/apt_packages.txt"
     if [[ -f /usr/bin/kopia ]]; then
         KOPIA_STRING="@reboot kopia server start --without-password --insecure --address='0.0.0.0:8113' --shutdown-grace-period=30s --enable-actions"
     fi
@@ -38,6 +39,10 @@ setup_crontab() {
     if ! grep -q -e "Backups" ./crontab_new ; then
         echo "Installing backup command in cron"
         echo "${BACKUP_STRING}" >> ./crontab_new
+    fi
+    if ! grep -q -e "apt_packages" ./crontab_new ; then
+        echo "Installing apt backup command in cron"
+        echo "${APT_BACKUP_STRING}" >> ./crontab_new
     fi
     if ! grep -q -e "kopia" ./crontab_new ; then
         if [ -f /usr/bin/kopia ]; then
