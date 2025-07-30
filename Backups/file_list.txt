@@ -2,3 +2,5 @@
 /etc/network/interfaces
 /etc/default/grub
 /etc/udev/rules.d/
+/etc/crypttab
+/etc/lightdm/

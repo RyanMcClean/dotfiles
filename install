@@ -104,22 +104,32 @@ if [[ -n "${DUCK_TOKEN}" ]]; then
 	DUCK_DNS_STRING="*/5 * * * * cd /home/${USER}/.duckdns/ && ./duck.sh >/dev/null 2>&1"
 fi
 
+# Backs up files listed in file_list.txt to /home/ryan_mcc/Backups every 2 hours
+BACKUP_STRING="0 */2 * * * xargs sudo cp -rv -t /home/ryan_mcc/Backups/ < /home/ryan_mcc/dotfiles/Backups/file_list.txt"
+
 # Save current crontab to file
-crontab -l > /dev/null 2>&1
 crontab -l > ./crontab_new
 
-# Check if yt-dlp and duckdns are already in crontab
-if ! grep -q -e "yt-dlp" -e "duckdns" ./crontab_new ; then
+# Check if yt-dlp string is already in crontab
+if ! grep -q -e "yt-dlp" ./crontab_new ; then
 	echo "Installing new commands to crontab"
 	# Check if yt-dlp and duckdns are installed
 	if [ -f /home/${USER}/.local/bin/yt-dlp ] ; then
 		echo "Installing yt-dlp command in cron"
 		echo "${YT_DLP_STRING}" >> ./crontab_new
 	fi
+fi
+# Check if duckdns string is already in crontab
+if ! grep -q -e "duckdns" ./contab_new ; then
 	if [ -f /home/${USER}/.duckdns/duck.sh ] ; then
 		echo "Installing duckdns command in cron"
 		echo "${DUCK_DNS_STRING}" >> ./crontab_new
 	fi
+fi
+# Check if backup string is already in crontab
+if ! grep -q -e "Backups" ./crontab_new ; then
+	echo "Installing backup command in cron"
+	echo "${BACKUP_STRING}" >> ./crontab_new
 fi
 
 # Install new crontab and delete temp file if installation successful
