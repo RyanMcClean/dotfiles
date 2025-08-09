@@ -110,13 +110,7 @@ for server in "${LOCAL_SERVERS[@]}"; do
 		continue
 	fi
 
-	if compare_files "./.env" "~/dotfiles/.env" "${server}" ; then
-		echo ".env file is already up to date on ${server}, skipping copy."
-	else 
-		echo "Copying .env file to ${server}..."
-		scp .env "${server}":~/dotfiles/.env > /dev/null && echo ".env file copied to ${server}"
-	fi
-
+	# Check and copy ssh keys first
 	if compgen -G "/home/${USER}/.ssh/*.pub" > /dev/null; then
 		if ! ssh -o PasswordAuthentication=no ${server} /bin/true; then
 			ssh-copy-id -i /home/${USER}/.ssh/*.pub "${server}" &> /dev/null && echo "SSH keys copied to ${server}"
@@ -126,4 +120,15 @@ for server in "${LOCAL_SERVERS[@]}"; do
 	else 
 		echo "NO SSH keys found, please create them first"
 	fi
+
+	# Compare env files, this is problematic as if you run this on a sever with old env files
+	# It will overwrite the new ones and break things
+	if compare_files "./.env" "~/dotfiles/.env" "${server}" ; then
+		echo ".env file is already up to date on ${server}, skipping copy."
+	else 
+		echo "Copying .env file to ${server}..."
+		scp .env "${server}":~/dotfiles/.env > /dev/null && echo ".env file copied to ${server}"
+	fi
+
+
 done
