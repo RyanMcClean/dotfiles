@@ -112,7 +112,7 @@ for server in "${LOCAL_SERVERS[@]}"; do
 
 	# Check and copy ssh keys first
 	if compgen -G "/home/${USER}/.ssh/*.pub" > /dev/null; then
-		if ! ssh -o PasswordAuthentication=no ${server} /bin/true; then
+		if ! ssh -o PasswordAuthentication=no ${server} /bin/true 2> /dev/null; then
 			ssh-copy-id -i /home/${USER}/.ssh/*.pub "${server}" &> /dev/null && echo "SSH keys copied to ${server}"
 		else
 			echo "SSH keys already exist on ${server}, skipping..."
