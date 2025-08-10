@@ -131,3 +131,4 @@ if [[ $(date +%m) == 12 ]]; then
 fi
 
 . ~/dotfiles/.env
+alias idrive='/opt/IDriveForLinux/bin/idrive'

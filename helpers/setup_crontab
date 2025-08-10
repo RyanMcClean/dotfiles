@@ -6,8 +6,8 @@ setup_crontab() {
 
     # Step 1
     # Conditionally set up crontab strings
-    if [[ -f /home/${USER}/.local/bin/yt-dlp ]]; then
-        YT_DLP_STRING="0 3 * * 0 /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexMedia/Youtube/urls.txt --force-overwrite &> /home/${USER}/dlp.log"
+    if [ -f /home/"${USER}"/.local/bin/yt-dlp ] || [ -f /usr/bin/yt-dlp ] ; then
+        YT_DLP_STRING="0 3 * * 0 /home/${USER}/.local/bin/yt-dlp --config-location /home/${USER}/.dlp.conf -a /export/PlexTVShows/Youtube/urls.txt --force-overwrite &> /home/${USER}/dlp.log"
     fi
     if [[ -n "${DUCK_TOKEN}" ]]; then
         DUCK_DNS_STRING="*/5 * * * * cd /home/${USER}/.duckdns/ && ./duck.sh >/dev/null 2>&1"
@@ -25,7 +25,7 @@ setup_crontab() {
     # Step 3
     # Check if strings are already in crontab, if not then append to new crontab
     if ! grep -q -e "yt-dlp" ./crontab_new ; then
-        if [ -f /home/${USER}/.local/bin/yt-dlp ] ; then
+        if [ -f /home/${USER}/.local/bin/yt-dlp ] || [ -f /usr/bin/yt-dlp ] ; then
             echo "Installing yt-dlp command in cron"
             echo "${YT_DLP_STRING}" >> ./crontab_new
         fi
